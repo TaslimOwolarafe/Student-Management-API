@@ -1,22 +1,57 @@
-from marshmallow import Schema, fields
-from .users import UserBaseSchema
+from flask_restx import Namespace, fields
 
-class CourseBaseSchema(Schema):
-    title = fields.Str(required=True)
-    code = fields.Str(required=False)
-    unit = fields.Int()
+course_inline_model = (
+    # 'Courses', 
+    {
+        'id': fields.Integer(),
+        'title': fields.String(required=True),
+        'code': fields.String(),
+        'unit': fields.String(),
+    }
+)
 
-class CourseInlineSchema(CourseBaseSchema):
-    id = fields.Int(dump_only=True)
+teacher_model = {
+    'id': fields.Integer(),
+    'email': fields.String(),
+    'student_no': fields.String(),
+    'first_name': fields.String(),
+    'last_name':fields.String(),
+}
 
-class TeacherBaseSchema(UserBaseSchema):
-    id = fields.Int(dump_only=True)
-    teacher_no = fields.Str(dump_only=True)
+teacher_update_model = (
+    # 'teacher Update', 
+    {
+        'teacher_no': fields.String(),
+        'first_name': fields.String(),
+        'last_name':fields.String()
+    }
+)
 
-class TeacherRegisterSchema(UserBaseSchema):
-    id = fields.Int(dump_only=True)
-    password = fields.Str(required=True, load_only=True)
+teacher_model = (
+    # 'teacher', 
+    {
+        'id': fields.Integer(),
+        'email': fields.String(),
+        'teacher_no': fields.String(),
+        'first_name': fields.String(),
+        'last_name':fields.String(),
+    }
+)
 
-class TeacherSchema(TeacherBaseSchema):
-    id = fields.Int(dump_only=True)
-    courses = fields.List(fields.Nested(CourseInlineSchema()), dump_only=True)
+teacher_inline_model = {
+    'email': fields.String(),
+    'teacher_no': fields.String(),
+    'first_name': fields.String(),
+    'last_name':fields.String()
+}
+
+teacher_course_model = (
+    # 'teacher Courses', 
+    {
+        'email': fields.String(),
+        'teacher_no': fields.String(),
+        'first_name': fields.String(),
+        'last_name':fields.String(),
+        'courses': fields.Nested(course_inline_model)
+    }
+)

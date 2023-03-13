@@ -1,10 +1,21 @@
-from marshmallow import Schema, fields
+from flask_restx import Namespace, fields
 
-class UserBaseSchema(Schema):
-    email = fields.Str(required=True)
-    first_name = fields.Str(required=True)
-    last_name = fields.Str(required=True)
+user_namespace = Namespace('User', description='Namescpace for user and authorization')
 
-class UserLoginSchema(Schema):
-    email = fields.Str(required=True)
-    password = fields.Str(required=True)
+user_base_model = {
+    'email': fields.String(required=True),
+    'first_name': fields.String(required=True),
+    'last_name': fields.String(required=True)
+}
+
+login_model = {
+    'email':fields.String(required=True),
+    'password':fields.String(required=True)
+}
+
+signup_model = {
+    'email': fields.String(required=True),
+    'first_name': fields.String(required=True),
+    'last_name': fields.String(required=True),
+    'password':fields.String(required=True)
+}

@@ -1,15 +1,18 @@
-from marshmallow import Schema, fields
-from .students import StudentBaseSchema
+from flask_restx import fields
+from .students import student_inline_model
+from .teachers import teacher_inline_model
 
-class CourseBaseSchema(Schema):
-    title = fields.Str(required=True)
-    code = fields.Str(required=False)
-    unit = fields.Int()
+course_base_model = {
+    'title': fields.String(required=True),
+    'code': fields.String(),
+    'unit': fields.String(),
+}
 
-class CourseInlineSchema(CourseBaseSchema):
-    id = fields.Int(dump_only=True)
-
-class CourseSchema(CourseBaseSchema):
-    id = fields.Int(dump_only=True)
-    teacher = fields.Int(dump_only=True)
-    students = fields.List(fields.Nested(StudentBaseSchema()), dump_only=True)
+course_model = {
+    'id':fields.Integer(),
+    'title': fields.String(required=True),
+    'code': fields.String(),
+    'unit': fields.String(),
+    'teacher': fields.Nested(teacher_inline_model),
+    'students':fields.List(fields.Nested(student_inline_model))
+}
