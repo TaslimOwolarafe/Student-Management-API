@@ -24,6 +24,7 @@ class Course(db.Model):
     unit = db.Column(db.Integer(), default=0)
     teacher = db.Column(db.Integer(), db.ForeignKey('teachers.id'))
     students = db.relationship("Student", secondary=student_course_table, back_populates="courses", lazy="dynamic") #overlaps="courses"
+    grades = db.relationship('Grade', backref="course_obj", lazy='dynamic')
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, onupdate=datetime.now)
 
@@ -48,6 +49,7 @@ class Grade(db.Model):
     score = db.Column(db.Integer(), nullable=False)
     letter_grade = db.Column(db.String(1), nullable=True)
     student_obj = db.relationship("Student", back_populates="grades")
+    # course_rel = db.relationship("Course", backref="grade")
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, onupdate=datetime.now)
 

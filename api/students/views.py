@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 from ..utils import db
 from ..models.students import Student
-from ..models.courses import Course, Grade
+from ..models.courses import Course, Grade, score_points
 
 from flask_restx import Resource, Namespace, fields
 from http import HTTPStatus
@@ -43,6 +43,7 @@ student_model = student_namespace.model(
 
 student_inline_model = student_namespace.model('student_inline',
     {
+    'id':fields.Integer(),
     'email': fields.String(),
     'student_no': fields.String(),
     'first_name': fields.String(),
@@ -64,6 +65,22 @@ course_base_model = student_namespace.model('course_base',{
     'code': fields.String(),
     'unit': fields.Integer(),
 })
+
+grade_inline = student_namespace.model(
+    'Grade Inline', {
+        'score':fields.Integer(required=True),
+        'course_obj':fields.Nested(course_inline_model, dump_only=True),
+        'letter_grade':fields.String(dump_only=True)
+    }
+)
+
+student_grades = student_namespace.model(
+    'Student Grades', {
+        'id':fields.Integer(),
+        'student_no':fields.String(),
+        'grades':fields.List(fields.Nested(grade_inline)),
+    }
+)
 
 
 @student_namespace.route("/students/")
@@ -112,6 +129,29 @@ class StudentsRetrieveUpdateDestroyView(Resource):
         db.session.commit()
 
         return student
+    
+@student_namespace.route('/grades/<int:student_id>')
+class GetStudentCoursesGrades(Resource):
+    # @student_namespace.marshal_with(student_grades)
+    def get(self, student_id):
+        student = Student.query.get_or_404(student_id)
+        grades = student.grades.all()
+        all_courses = student.courses
+        cp = 0
+        tu = 0
+        for grade in grades:
+            cp += score_points[grade.letter_grade]*grade.course_obj.unit
+            tu += grade.course_obj.unit
+        print(cp, tu)
+        try:
+            gpa=cp/tu
+            float(gpa)
+        except:
+            gpa = {'value':0,'message':'no courses for this student has been graded.'}
+        ungraded_courses = [course for course in all_courses if Grade.query.filter_by(student=student.id,course=course.id).first()==None]
+        data = student_namespace.marshal(student, student_grades)
+        data.update({'ungraded_courses':student_namespace.marshal(ungraded_courses, course_inline_model), "GPA":gpa})
+        return data, HTTPStatus.OK
     
 
 @student_namespace.route('/student')

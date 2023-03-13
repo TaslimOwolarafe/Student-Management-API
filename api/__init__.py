@@ -14,6 +14,7 @@ from .utils import db
 from .auth.views import user_namespace
 from .students.views import student_namespace
 from .courses.views import course_namespace
+from .grades.views import grade_namespace
 
 def create_app(config=config_dict['dev']):
     app = Flask(__name__)
@@ -56,6 +57,7 @@ def create_app(config=config_dict['dev']):
     api.add_namespace(student_namespace)
     api.add_namespace(user_namespace)
     api.add_namespace(course_namespace)
+    api.add_namespace(grade_namespace)
 
     @app.shell_context_processor
     def make_shell_context():

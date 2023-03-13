@@ -158,3 +158,31 @@ class StudentCourseRegister(Resource):
         student.courses.remove(course)
         db.session.commit()
         return {'message': 'course unregistered', 'data':course_namespace.marshal(student.courses)}, HTTPStatus.OK
+    
+@course_namespace.route("/<int:course_id>/student/<int:student_id>/registeration")
+class StudentRegisteration(Resource):
+    @course_namespace.marshal_with(course_model)
+    @course_namespace.doc(description="Register a course for student",params={'course_id':'A course id.'})
+    def post(self, course_id, student_id):
+        """
+            Register a course
+        """
+        student = Student.query.get_or_404(student_id)
+        course = Course.query.get_or_404(course_id)
+        if course in student.courses:
+            abort(400, message='course already registred!')
+        student.courses.append(course)
+        db.session.commit()
+        return student.courses, HTTPStatus.OK
+    @course_namespace.doc(description="Unregister a course for student",params={'course_id':'A course id.'})
+    def delete(self, course_id, student_id):
+        """
+            Unregister a course
+        """
+        student = Student.query.get_or_404(student_id)
+        course = Course.query.get_or_404(course_id)
+        if course not in student.courses:
+            abort(400, message='course not registred!')
+        student.courses.remove(course)
+        db.session.commit()
+        return {'message': 'course unregistered', 'data':course_namespace.marshal(student.courses)}, HTTPStatus.OK
