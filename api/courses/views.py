@@ -77,6 +77,7 @@ class CourseCreateRetrieve(Resource):
     def post(self):
         """
             Create a course.
+            Teacher authentication required.
         """
         teacher = current_user.id
         data = request.get_json()
@@ -109,7 +110,8 @@ class CourseDetailUpdateDestroy(Resource):
     @course_namespace.doc(description="Update a course code and unit by id.", params={'course_id':'A course id.'})
     def put(self, course_id):
         """
-            Update course
+            Update course.
+            Teacher authentication required.
         """
         course = Course.query.get_or_404(course_id)
         data = request.get_json()
@@ -119,9 +121,11 @@ class CourseDetailUpdateDestroy(Resource):
         return course, HTTPStatus.OK
     
     @course_namespace.doc(description="Delete a course by id")
+    @decorators.teacher_required()
     def delete(self, course_id):
         """
-            delete a course by id
+            delete a course by id.
+            Teacher authentication required.
         """
         course = Course.query.get_or_404(course_id)
         db.session.delete(course)
@@ -136,6 +140,7 @@ class StudentCourseRegister(Resource):
     def post(self, course_id):
         """
             Register a course
+            student user authentication required. Registers a course with course_id for authenticated student.
         """
         student = current_user
         course = Course.query.get_or_404(course_id)
@@ -150,6 +155,7 @@ class StudentCourseRegister(Resource):
     def delete(self, course_id):
         """
             Unregister a course
+            student user required. Unregisters a course with course_id for authenticated student.
         """
         student = current_user
         course = Course.query.get_or_404(course_id)
@@ -163,9 +169,11 @@ class StudentCourseRegister(Resource):
 class StudentRegisteration(Resource):
     @course_namespace.marshal_with(course_model)
     @course_namespace.doc(description="Register a course for student",params={'course_id':'A course id.'})
+    @decorators.teacher_required()
     def post(self, course_id, student_id):
         """
-            Register a course
+            Register a course. Teacher authentication required.
+            Teacher registers a course with course_id for student with student_id.
         """
         student = Student.query.get_or_404(student_id)
         course = Course.query.get_or_404(course_id)
@@ -174,10 +182,13 @@ class StudentRegisteration(Resource):
         student.courses.append(course)
         db.session.commit()
         return student.courses, HTTPStatus.OK
+    
     @course_namespace.doc(description="Unregister a course for student",params={'course_id':'A course id.'})
+    @decorators.teacher_required()
     def delete(self, course_id, student_id):
         """
-            Unregister a course
+            Unregister a course. Teacher authentication required.
+            Teacher unregisters a course with course_id for student with student_id.
         """
         student = Student.query.get_or_404(student_id)
         course = Course.query.get_or_404(course_id)

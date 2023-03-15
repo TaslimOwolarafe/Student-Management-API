@@ -1,9 +1,8 @@
 from datetime import datetime
-from flask.views import MethodView
 from flask import abort, request
 from flask_restx import Namespace, Resource
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt, create_refresh_token, get_jwt_header, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt, create_refresh_token, get_jwt_header, get_jwt_identity, current_user
 
 from ..utils import db
 from ..models.users import User
@@ -97,7 +96,7 @@ class LoginView(Resource):
 class TokenRefresh(Resource):
     @jwt_required(refresh=True)
     def post(self):
-        user = get_jwt_identity()
+        user = current_user
         new_token = create_access_token(identity=user,fresh=False, additional_claims={user.role:True})
         jti = get_jwt()['jti']
         return {'access_token':new_token}

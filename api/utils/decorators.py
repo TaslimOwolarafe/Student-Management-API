@@ -1,6 +1,7 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
 from flask import jsonify, abort
+from copy import deepcopy
 
 def student_required():
     def wrapper(fn):
@@ -31,3 +32,22 @@ def teacher_required():
         return decorator
 
     return wrapper
+
+def alt_response(
+        status_code,
+        response=None,
+    ):
+    if response is not None:
+        resp_doc = response
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        x = wrapper
+        wrapper._apidoc = deepcopy(getattr(wrapper, "_apidoc", {}))
+        wrapper._apidoc.setdefault("response", {}).setdefault("responses", {})[
+            status_code
+        ] = resp_doc
+        return wrapper
+    return decorator

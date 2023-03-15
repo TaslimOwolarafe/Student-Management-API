@@ -1,6 +1,5 @@
 from flask import request
 from flask.views import MethodView
-from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 from ..utils import db
@@ -132,8 +131,12 @@ class StudentsRetrieveUpdateDestroyView(Resource):
     
 @student_namespace.route('/grades/<int:student_id>')
 class GetStudentCoursesGrades(Resource):
+    @student_namespace.doc(description="Get a students grades in all courses they're offering and their GPA.")
     # @student_namespace.marshal_with(student_grades)
     def get(self, student_id):
+        """
+            Retrieve a student's grades and GPA.
+        """
         student = Student.query.get_or_404(student_id)
         grades = student.grades.all()
         all_courses = student.courses
@@ -142,7 +145,6 @@ class GetStudentCoursesGrades(Resource):
         for grade in grades:
             cp += score_points[grade.letter_grade]*grade.course_obj.unit
             tu += grade.course_obj.unit
-        print(cp, tu)
         try:
             gpa=cp/tu
             float(gpa)
@@ -150,7 +152,7 @@ class GetStudentCoursesGrades(Resource):
             gpa = {'value':0,'message':'no courses for this student has been graded.'}
         ungraded_courses = [course for course in all_courses if Grade.query.filter_by(student=student.id,course=course.id).first()==None]
         data = student_namespace.marshal(student, student_grades)
-        data.update({'ungraded_courses':student_namespace.marshal(ungraded_courses, course_inline_model), "GPA":gpa})
+        data.update({'awaiting results':student_namespace.marshal(ungraded_courses, course_inline_model), "GPA":gpa})
         return data, HTTPStatus.OK
     
 
