@@ -125,9 +125,11 @@ class GradeStudentCourseGetCreate(Resource):
         return grade, HTTPStatus.OK
     
     @grade_namespace.doc(params={"student_id":"id of student", "course_id":"id of course"}, description="Delete a grade of a student on a course.")
+    @decorators.teacher_required()
     def delete(self, student_id, course_id):
         """
-            Delete a students grade on a course
+            Delete a students grade on a course.
+            Teacher user authentication required.
         """
         course = Course.query.get_or_404(course_id)
         student = Student.query.get_or_404(student_id)
@@ -151,3 +153,4 @@ class GetCourseStudentGrades(Resource):
         data = grade_namespace.marshal(course, course_grade)
         data.update({'ungraded_students':grade_namespace.marshal(ungraded_students, student_inline_model)})
         return data, HTTPStatus.OK
+

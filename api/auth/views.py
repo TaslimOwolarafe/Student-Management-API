@@ -3,7 +3,7 @@ from flask import abort, request
 from flask_restx import Namespace, Resource
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, create_refresh_token, get_jwt_header, get_jwt_identity, current_user
-
+from http import HTTPStatus
 from ..utils import db
 from ..models.users import User
 from ..models.students import Student
@@ -11,7 +11,7 @@ from ..models.teachers import Teacher
 
 from flask_restx import Namespace, fields, marshal
 
-user_namespace = Namespace('Users', description='Namescpace for user and authorization')
+user_namespace = Namespace('users', description='Namescpace for user and authorization')
 
 user_base_model = user_namespace.model('User Base',{
     'email': fields.String(required=True),
@@ -50,7 +50,11 @@ teacher_inline_model = user_namespace.model('Teacher Inline',{
 @user_namespace.route("/register/student")
 class StudentCreateView(Resource):
     @user_namespace.expect(signup_model)
+    @user_namespace.doc(description="register a student account.")
     def post(self):
+        """
+        register a student account.
+        """
         data = request.get_json()
         if User.query.filter(User.email==data['email']).first():
             abort(409, "A user with that email already exixts")
@@ -63,7 +67,11 @@ class StudentCreateView(Resource):
 @user_namespace.route("/register/teacher")
 class TeacherCreateView(Resource):
     @user_namespace.expect(signup_model)
+    @user_namespace.doc(description="Register a tacher account.")
     def post(self):
+        """
+        Register a tacher account.
+        """
         data = request.get_json()
         if User.query.filter(User.email==data['email']).first():
             abort(409, "A user with that email already exixts")
@@ -77,7 +85,12 @@ class TeacherCreateView(Resource):
 @user_namespace.route("/login")
 class LoginView(Resource):
     @user_namespace.expect(login_model)
+    @user_namespace.doc(description="Login for both students and teachers.")
     def post(self):
+        """
+        Login for both students and teachers.
+        password: 'taslim'
+        """
         data = request.get_json()
         user = User.query.filter(User.email==data['email']).first()
         if user and pbkdf2_sha256.verify(data['password'], user.password):
@@ -95,8 +108,23 @@ class LoginView(Resource):
 @user_namespace.route("/refresh")
 class TokenRefresh(Resource):
     @jwt_required(refresh=True)
+    @user_namespace.doc(description="Refresh an access Token")
     def post(self):
+        """
+        Refresh an access Token
+        """
         user = current_user
         new_token = create_access_token(identity=user,fresh=False, additional_claims={user.role:True})
         jti = get_jwt()['jti']
         return {'access_token':new_token}
+    
+@user_namespace.route("/teachers")
+class teacherListDetailView(Resource):
+    @user_namespace.marshal_with(teacher_inline_model)
+    @user_namespace.doc(description="Get all teachers")
+    def get(self):
+        """
+            Get all teachers.
+        """
+        teachers = Teacher.query.all()
+        return teachers, HTTPStatus.OK

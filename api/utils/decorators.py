@@ -1,6 +1,7 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
 from flask import jsonify, abort
+from flask_restx import abort
 from copy import deepcopy
 
 def student_required():
@@ -28,6 +29,7 @@ def teacher_required():
                 return fn(*args, **kwargs)
             else:
                 return jsonify(msg="Teacher users only!"), 403
+                # return abort(message='teacher users only!'), 403
 
         return decorator
 
