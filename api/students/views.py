@@ -186,6 +186,7 @@ class GetAuthenticatedStudentsGrade(Resource):
 @student_namespace.route('/student')
 class StudentView(Resource):
     @jwt_required()
+    @decorators.student_required()
     @student_namespace.marshal_with(student_course_model)
     @student_namespace.doc(description="Retrive authenticated Student Detail with courses.")
     def get(self):

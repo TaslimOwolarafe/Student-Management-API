@@ -75,6 +75,7 @@ class GradeStudentCourseGetCreate(Resource):
     @grade_namespace.expect(grade_create)
     @grade_namespace.marshal_with(grade_inline)
     @grade_namespace.doc(description="Grade a student in a course", params={"student_id":"id of student",'course_id':'id of course'})
+    @jwt_required()
     @decorators.teacher_required()
     def post(self, student_id, course_id):
         """
@@ -94,6 +95,7 @@ class GradeStudentCourseGetCreate(Resource):
     
     @grade_namespace.marshal_with(grade_inline)
     @grade_namespace.doc(description="Get a student's Grade in a course", params={"student_id":"id of student",'course_id':'id of course'})
+    @jwt_required()
     @decorators.teacher_required()
     def get(self, student_id, course_id):
         """
@@ -125,6 +127,7 @@ class GradeStudentCourseGetCreate(Resource):
         return grade, HTTPStatus.OK
     
     @grade_namespace.doc(params={"student_id":"id of student", "course_id":"id of course"}, description="Delete a grade of a student on a course.")
+    @jwt_required()
     @decorators.teacher_required()
     def delete(self, student_id, course_id):
         """
