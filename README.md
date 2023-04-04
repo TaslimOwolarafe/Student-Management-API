@@ -98,11 +98,11 @@ pytest
 
 ## Endpoints
 #### A brief guide on keywords
-- on USER TYPE:
-    - "Teacher User" means you have to login with a teacher email and password as these endpoints can only be accessed by teachers. You can generate a teacher token and store for use on any of the endpoints with Teacher User USER TYPE.
-    - "Student User" means you have to login with a student email and password as these endpoints can only be accessed by students. You can generate a student token and store for use on any of the endpoints with Student User USER TYPE.
-- on Student Primary Key:
-    - The Student Primary Key is the "id" of a student and not "student_no" as seen in the list returned from the route "/students/students".
+- on _USER TYPE_:
+    - "_Teacher User_" means you have to login with a teacher email and password as these endpoints can only be accessed by teachers. You can generate a teacher token and store for use on any of the endpoints with Teacher User _USER TYPE_.
+    - "_Student User_" means you have to login with a student email and password as these endpoints can only be accessed by students. You can generate a student token and store for use on any of the endpoints with Student User _USER TYPE_.
+- on _VARIABLE RULE_:
+    - The "_Student Primary ID_" is the "_id_" of a student and not "student_no" as seen in the list returned from the route "_/students/students_".
 
 ### User Auth Endpoints
 | ROUTE | METHOD | DESCRIPTION | AUTHORIZATION  | USER TYPE |  
