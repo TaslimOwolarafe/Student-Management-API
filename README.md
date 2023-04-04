@@ -26,9 +26,7 @@ Visit [website](https://taslim-student-management.herokuapp.com)
 
 
 ### About
-This is a student management REST api that enables the school authorities(admin) to manage students and allow students to login and check cgpa.
-Students have limited access to the app in terms of the number of routes they can access, admin have unlimited access to student and course routes.
-The super admin has unlimited access to all routes in the app
+This is a student management REST api for teachers and students to access different school management functions related to courses and grades.
 <p align="right"><a href="#readme-top">back to top</a></p>
 
 
