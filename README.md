@@ -12,9 +12,10 @@
     <li>
       <a href="#endpoints">Endpoints</a>
       <ol>
-        <li><a href="#auth-endpoints">Auth Endpoints</a></li>
+        <li><a href="#user-auth-endpoints">User Auth Endpoints</a></li>
         <li><a href="#course-endpoints">Course Endpoints</a></li>
         <li><a href="#student-endpoints">Student Endpoints</a></li>
+        <li><a href="#grades-endpoints">Grades Endpoints</a></li>
       </ol>
     </li>
   </ul>
@@ -103,7 +104,7 @@ pytest
 - on Student Primary Key:
     - The Student Primary Key is the "id" of a student and not "student_no" as seen in the list returned from the route "/students/students".
 
-### Auth Endpoints
+### User Auth Endpoints
 | ROUTE | METHOD | DESCRIPTION | AUTHORIZATION  | USER TYPE |  
 | ------- | ----- | ------------ | ------|------- |
 |  `/users/register/student` | POST | To register a student account   | Authenticated | Any | 
